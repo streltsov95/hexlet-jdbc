@@ -12,12 +12,32 @@ public class Application {
                 statement.execute(sql1);
             }
 
-            String sql2 = "INSERT INTO users (username, phone) VALUES ('tommy', '123456789'), ('jimmy', '987456321')";
-            try (Statement statement2 = conn.createStatement()) {
-                statement2.executeUpdate(sql2);
+            String sql2 = "INSERT INTO users (username, phone) VALUES (?, ?)";
+            try (PreparedStatement statement2 = conn.prepareStatement(sql2)) {
+                statement2.setString(1, "jimmy");
+                statement2.setString(2, "7845612");
+                statement2.executeUpdate();
+
+                statement2.setString(1, "tommy");
+                statement2.setString(2, "5462136");
+                statement2.executeUpdate();
             }
 
             String sql3 = "SELECT * FROM users";
+            try (Statement statement3 = conn.createStatement()) {
+                ResultSet resultSet = statement3.executeQuery(sql3);
+                while (resultSet.next()) {
+                    System.out.println(resultSet.getString("username"));
+                    System.out.println(resultSet.getString("phone"));
+                }
+            }
+
+            String sql4 = "DELETE FROM users WHERE username = ?";
+            try (PreparedStatement statement4 = conn.prepareStatement(sql4)) {
+                statement4.setString(1, "jimmy");
+                statement4.executeUpdate();
+            }
+
             try (Statement statement3 = conn.createStatement()) {
                 ResultSet resultSet = statement3.executeQuery(sql3);
                 while (resultSet.next()) {
