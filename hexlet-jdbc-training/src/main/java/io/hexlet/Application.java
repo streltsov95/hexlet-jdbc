@@ -12,35 +12,37 @@ public class Application {
                 statement.execute(sql1);
             }
 
-            String sql2 = "INSERT INTO users (username, phone) VALUES (?, ?)";
-            try (PreparedStatement statement2 = conn.prepareStatement(sql2)) {
-                statement2.setString(1, "jimmy");
-                statement2.setString(2, "7845612");
-                statement2.executeUpdate();
-
-                statement2.setString(1, "tommy");
-                statement2.setString(2, "5462136");
-                statement2.executeUpdate();
-            }
+            var dao = new UserDAO(conn);
+            dao.save(new User("jimmy", "+78921255"));
+            dao.save(new User("tommy", "+789454655"));
 
             String sql3 = "SELECT * FROM users";
             try (Statement statement3 = conn.createStatement()) {
                 ResultSet resultSet = statement3.executeQuery(sql3);
                 while (resultSet.next()) {
+                    System.out.println(resultSet.getLong("id"));
                     System.out.println(resultSet.getString("username"));
                     System.out.println(resultSet.getString("phone"));
                 }
             }
+            try {
+                var user = dao.find(2L);
+                System.out.println(user);
+                var user1 = dao.find(5L);
+                System.out.println(user1);
 
-            String sql4 = "DELETE FROM users WHERE username = ?";
-            try (PreparedStatement statement4 = conn.prepareStatement(sql4)) {
-                statement4.setString(1, "jimmy");
-                statement4.executeUpdate();
+                dao.delete(1L);
+
+                dao.delete(6L);
+            } catch (SQLException e) {
+                System.out.println("user does not exist");
             }
+
 
             try (Statement statement3 = conn.createStatement()) {
                 ResultSet resultSet = statement3.executeQuery(sql3);
                 while (resultSet.next()) {
+                    System.out.println(resultSet.getLong("id"));
                     System.out.println(resultSet.getString("username"));
                     System.out.println(resultSet.getString("phone"));
                 }
